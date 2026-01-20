@@ -87,7 +87,10 @@ const pool = new Pool({
 
 export default async function handler(req, res) {
   try {
-    console.info('STORES API: handling request', { query: req.query, envPresent: !!process.env.DATABASE_URL });
+    console.info("STORES API: handling request", {
+      query: req.query,
+      envPresent: !!process.env.DATABASE_URL,
+    });
     const { shop, email, fromDate, toDate } = req.query;
 
     let conditions = [];
@@ -101,7 +104,7 @@ export default async function handler(req, res) {
 
     if (email) {
       conditions.push(
-        `("email" ILIKE $${index} OR "contactEmail" ILIKE $${index})`
+        `("email" ILIKE $${index} OR "contactEmail" ILIKE $${index})`,
       );
       values.push(`%${email}%`);
       index++;
@@ -134,12 +137,15 @@ export default async function handler(req, res) {
       ${whereClause}
       ORDER BY "createdAt" DESC
       `,
-      values
+      values,
     );
 
     return res.status(200).json(result.rows);
   } catch (error) {
-    console.error("STORES API ERROR:", error && error.message ? error.message : error);
+    console.error(
+      "STORES API ERROR:",
+      error && error.message ? error.message : error,
+    );
     return res.status(500).json({ error: "Failed to fetch stores" });
   }
 }

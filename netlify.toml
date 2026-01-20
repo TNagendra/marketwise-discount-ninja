@@ -1,17 +1,11 @@
-# Netlify config (optional but helpful)
-# This file documents build settings and contexts. Environment variables with
-# sensitive values should be set in the Netlify dashboard (Site settings > Build & deploy > Environment).
-
 [build]
   command = "npm run build"
-  publish = "out"
 
-# Optional context-specific envs (for local documentation only - do not put secrets here)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [context.production.environment]
-  # DATABASE_URL = "<set in Netlify dashboard>"
   NODE_ENV = "production"
 
 [context.deploy-preview.environment]
   NODE_ENV = "development"
-
-# Redirects or function settings can go here if you add Netlify functions later.

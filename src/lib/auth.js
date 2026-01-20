@@ -21,7 +21,7 @@ export function getSessionUserFromReq(req) {
   const match = cookie.match(/(?:^|; )admin_session=([^;]+)/);
   if (!match) return null;
   try {
-    const parts = decodeURIComponent(match[1]).split('|');
+    const parts = decodeURIComponent(match[1]).split("|");
     const email = parts[0];
     const expiresAt = parts[1] ? Number(parts[1]) : 0;
     if (!email) return null;

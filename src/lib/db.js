@@ -21,12 +21,12 @@ function parseAndMaskConnectionString(raw) {
     // new URL works for postgres/postgresql schemes
     const url = new URL(raw);
     return {
-      protocol: url.protocol ? url.protocol.replace(':','') : undefined,
+      protocol: url.protocol ? url.protocol.replace(":", "") : undefined,
       host: url.hostname,
       port: url.port,
-      database: url.pathname ? url.pathname.replace(/^\//, '') : undefined,
+      database: url.pathname ? url.pathname.replace(/^\//, "") : undefined,
       hasCredentials: !!(url.username || url.password),
-      sslmode: raw.includes('sslmode=require'),
+      sslmode: raw.includes("sslmode=require"),
     };
   } catch (e) {
     return { rawPresent: !!raw };
@@ -34,7 +34,7 @@ function parseAndMaskConnectionString(raw) {
 }
 
 const _connInfo = parseAndMaskConnectionString(rawConnectionString);
-console.info('DB: connection string present=', !!rawConnectionString, 'info=', {
+console.info("DB: connection string present=", !!rawConnectionString, "info=", {
   protocol: _connInfo.protocol,
   host: _connInfo.host,
   port: _connInfo.port,
@@ -65,28 +65,31 @@ const pool = new Pool({
 });
 
 // Global error handler for unexpected client errors
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle DB client', err);
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle DB client", err);
 });
 
 // Try a lightweight connection test once at module load to help with deploy debugging.
 (async function testConnection() {
   if (!connectionString) {
-    console.warn('DB: no connection string provided; skipping connection test');
+    console.warn("DB: no connection string provided; skipping connection test");
     return;
   }
 
   try {
     const client = await pool.connect();
     try {
-      await client.query('SELECT 1');
-      console.info('DB: connection test succeeded');
+      await client.query("SELECT 1");
+      console.info("DB: connection test succeeded");
     } finally {
       client.release();
     }
   } catch (err) {
     // Do not print the connection string; print the error message which helps debugging
-    console.error('DB: connection test failed:', err && err.message ? err.message : err);
+    console.error(
+      "DB: connection test failed:",
+      err && err.message ? err.message : err,
+    );
   }
 })();
 
@@ -166,11 +169,11 @@ export async function getStores(page = 1, limit = 10) {
       ORDER BY "createdAt" DESC
       LIMIT $1 OFFSET $2
       `,
-      [limit, offset]
+      [limit, offset],
     );
 
     const countResult = await dbClient.query(
-      `SELECT COUNT(*) AS count FROM stores`
+      `SELECT COUNT(*) AS count FROM stores`,
     );
 
     return {
@@ -209,7 +212,7 @@ export async function getStoreDetails(shopId) {
       WHERE shop = $1
       LIMIT 1
     `,
-      [shopId]
+      [shopId],
     );
 
     return result.rows[0] || null;
@@ -292,12 +295,12 @@ export async function getStoreDiscounts(shopId, page = 1, limit = 10) {
       ORDER BY "createdAt" DESC
       LIMIT $2 OFFSET $3
       `,
-      [shopId, limit, offset]
+      [shopId, limit, offset],
     );
 
     const countResult = await dbClient.query(
       `SELECT COUNT(*) AS count FROM "Discount" WHERE "shopId" = $1`,
-      [shopId]
+      [shopId],
     );
 
     return {
@@ -339,7 +342,7 @@ export async function getDiscountDetails(discountId) {
       WHERE id = $1
       LIMIT 1
     `,
-      [discountId]
+      [discountId],
     );
 
     return result.rows[0] || null;
@@ -371,12 +374,12 @@ export async function getDiscountUsage(discountId, page = 1, limit = 10) {
       ORDER BY "usedAt" DESC
       LIMIT $2 OFFSET $3
       `,
-      [discountId, limit, offset]
+      [discountId, limit, offset],
     );
 
     const countResult = await dbClient.query(
       `SELECT COUNT(*) AS count FROM "DiscountUsage" WHERE "discountId" = $1`,
-      [discountId]
+      [discountId],
     );
 
     return {
@@ -413,11 +416,11 @@ export async function getRecentAffiliateTracking(page = 1, limit = 10) {
       ORDER BY "first_seen_at" DESC
       LIMIT $1 OFFSET $2
       `,
-      [limit, offset]
+      [limit, offset],
     );
 
     const countResult = await dbClient.query(
-      `SELECT COUNT(*) AS count FROM "affiliate_tracking"`
+      `SELECT COUNT(*) AS count FROM "affiliate_tracking"`,
     );
 
     return {
@@ -457,7 +460,7 @@ export async function getAffiliateTrackingDetails(hash) {
       WHERE "reliable_hash" = $1
       LIMIT 1
     `,
-      [hash]
+      [hash],
     );
 
     return result.rows[0] || null;
