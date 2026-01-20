@@ -17,11 +17,20 @@ export async function validateAdminLogin(email, password) {
 
 export function getSessionUserFromReq(req) {
   const cookie = req.headers?.cookie || "";
+  // We store the cookie value as: <email>|<expiresAt>
   const match = cookie.match(/(?:^|; )admin_session=([^;]+)/);
   if (!match) return null;
-  const email = decodeURIComponent(match[1]);
-  const user = ADMIN_USERS.find((u) => u.email === email);
-  return user ? { email: user.email, name: user.name } : null;
+  try {
+    const parts = decodeURIComponent(match[1]).split('|');
+    const email = parts[0];
+    const expiresAt = parts[1] ? Number(parts[1]) : 0;
+    if (!email) return null;
+    if (expiresAt && Date.now() > expiresAt) return null; // expired
+    const user = ADMIN_USERS.find((u) => u.email === email);
+    return user ? { email: user.email, name: user.name } : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 export function clearSessionCookie(res) {

@@ -15,6 +15,34 @@ if (
 const rawConnectionString = process.env.DATABASE_URL || "";
 const connectionString = rawConnectionString.replace(/^"|"$/g, "");
 
+// Helper to safely log non-sensitive parts of the connection string.
+function parseAndMaskConnectionString(raw) {
+  try {
+    // new URL works for postgres/postgresql schemes
+    const url = new URL(raw);
+    return {
+      protocol: url.protocol ? url.protocol.replace(':','') : undefined,
+      host: url.hostname,
+      port: url.port,
+      database: url.pathname ? url.pathname.replace(/^\//, '') : undefined,
+      hasCredentials: !!(url.username || url.password),
+      sslmode: raw.includes('sslmode=require'),
+    };
+  } catch (e) {
+    return { rawPresent: !!raw };
+  }
+}
+
+const _connInfo = parseAndMaskConnectionString(rawConnectionString);
+console.info('DB: connection string present=', !!rawConnectionString, 'info=', {
+  protocol: _connInfo.protocol,
+  host: _connInfo.host,
+  port: _connInfo.port,
+  database: _connInfo.database,
+  sslmode: _connInfo.sslmode,
+  hasCredentials: _connInfo.hasCredentials,
+});
+
 // Configure SSL based on environment and explicit ALLOW_SELF_SIGNED_CERTS
 let sslOptions = false;
 if (
@@ -35,6 +63,32 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000,
   keepAlive: true,
 });
+
+// Global error handler for unexpected client errors
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle DB client', err);
+});
+
+// Try a lightweight connection test once at module load to help with deploy debugging.
+(async function testConnection() {
+  if (!connectionString) {
+    console.warn('DB: no connection string provided; skipping connection test');
+    return;
+  }
+
+  try {
+    const client = await pool.connect();
+    try {
+      await client.query('SELECT 1');
+      console.info('DB: connection test succeeded');
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    // Do not print the connection string; print the error message which helps debugging
+    console.error('DB: connection test failed:', err && err.message ? err.message : err);
+  }
+})();
 
 async function connectDB() {
   return pool;

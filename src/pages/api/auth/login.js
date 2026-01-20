@@ -18,10 +18,14 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Set simple auth cookie
+    // Set auth cookie with an expiry timestamp (1 hour)
+    const maxAgeMs = 1000 * 60 * 60; // 1 hour
+    const expiresAt = Date.now() + maxAgeMs;
+    const cookieValue = encodeURIComponent(`${user.email}|${expiresAt}`);
+    const expires = new Date(expiresAt).toUTCString();
     res.setHeader(
       "Set-Cookie",
-      `admin_session=${encodeURIComponent(user.email)}; Path=/; HttpOnly; SameSite=Lax`,
+      `admin_session=${cookieValue}; Path=/; HttpOnly; SameSite=Lax; Expires=${expires}`,
     );
 
     return res.status(200).json({ success: true });

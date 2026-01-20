@@ -75,6 +75,8 @@
 // }
 import { Pool } from "pg";
 
+// Note: this API route creates its own Pool. Keep logs concise and avoid
+// importing non-existent top-level modules.
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl:
@@ -85,6 +87,7 @@ const pool = new Pool({
 
 export default async function handler(req, res) {
   try {
+    console.info('STORES API: handling request', { query: req.query, envPresent: !!process.env.DATABASE_URL });
     const { shop, email, fromDate, toDate } = req.query;
 
     let conditions = [];
@@ -136,7 +139,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json(result.rows);
   } catch (error) {
-    console.error("STORES API ERROR:", error);
+    console.error("STORES API ERROR:", error && error.message ? error.message : error);
     return res.status(500).json({ error: "Failed to fetch stores" });
   }
 }
