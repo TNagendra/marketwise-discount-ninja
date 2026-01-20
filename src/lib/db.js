@@ -1,14 +1,20 @@
 // lib/db.js
 import { Pool } from "pg";
-// Allow local development to accept self-signed DB certificates when explicitly enabled.
-// Set ALLOW_SELF_SIGNED_CERTS=1 in your .env while developing if your DB uses a self-signed cert.
-if (
-  process.env.NODE_ENV !== "production" &&
-  process.env.ALLOW_SELF_SIGNED_CERTS === "1"
-) {
+// If the deploy environment explicitly opts in to accept self-signed DB certificates
+// set ALLOW_SELF_SIGNED_CERTS=1 in that environment (e.g. Netlify env vars).
+// WARNING: Disabling TLS verification is unsafe for public production environments.
+// Prefer a CA-signed certificate or a secure proxy. This toggle exists only to
+// unblock deployments that must connect to a DB with a self-signed cert.
+if (process.env.ALLOW_SELF_SIGNED_CERTS === "1") {
   // This disables TLS certificate validation globally for Node's https/ssl sockets.
-  // Only enable in local development when you understand the security implications.
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  if (process.env.NODE_ENV === "production") {
+    console.warn(
+      'DB: ALLOW_SELF_SIGNED_CERTS=1 detected in production — TLS certificate verification is disabled. This is insecure; prefer a CA-signed certificate.',
+    );
+  } else {
+    console.info('DB: ALLOW_SELF_SIGNED_CERTS=1 — TLS certificate verification disabled for local/dev');
+  }
 }
 
 // Ensure connection string isn't wrapped in quotes from .env editing
