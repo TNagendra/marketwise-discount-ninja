@@ -9,8 +9,6 @@ import {
   TrendingUp,
   Users,
   Clock,
-  CheckCircle,
-  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 export async function getServerSideProps({ req }) {
@@ -74,25 +72,6 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's what's happening today.
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0">
-          <p className="text-sm text-muted-foreground">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        </div>
-      </div> */}
       <div
         className="
     relative rounded-xl p-6
@@ -153,10 +132,10 @@ export default function Dashboard() {
       </div>
 
       {/* Activities Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentActivity tracking={tracking} />
-        <AffiliateTable tracking={tracking} />
-      </div>
+        
+      </div> */}
     </div>
   );
 }
@@ -232,126 +211,126 @@ function StatCard({ title, value, icon, change, trend }) {
   );
 }
 
-function RecentActivity({ tracking }) {
-  return (
-    <Card className="transition-all hover:shadow-md hover:-translate-y-0.5">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center">
-          <Clock className="h-5 w-5 mr-2 text-primary" />
-          Recent Affiliate Activity
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {tracking.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Users className="h-12 w-12 mx-auto text-muted-foreground/20" />
-            <p className="mt-2">No recent activity</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {tracking.slice(0, 5).map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-full bg-primary/10">
-                    <Users className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{item.affiliate_code}</p>
-                    <p className="text-sm text-muted-foreground">{item.shop}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <Badge
-                    className={
-                      item.status === "converted"
-                        ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
-                        : item.status === "pending"
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400"
-                          : "bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400"
-                    }
-                  >
-                    {item.status}
-                  </Badge>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(item.first_seen_at).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        <Link
-          href="/affiliate"
-          className="text-primary hover:underline text-sm block text-center mt-4"
-        >
-          View all activity →
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
+// function RecentActivity({ tracking }) {
+//   return (
+//     <Card className="transition-all hover:shadow-md hover:-translate-y-0.5">
+//       <CardHeader className="flex flex-row items-center justify-between">
+//         <CardTitle className="flex items-center">
+//           <Clock className="h-5 w-5 mr-2 text-primary" />
+//           Recent Affiliate Activity
+//         </CardTitle>
+//       </CardHeader>
+//       <CardContent>
+//         {tracking.length === 0 ? (
+//           <div className="text-center py-8 text-muted-foreground">
+//             <Users className="h-12 w-12 mx-auto text-muted-foreground/20" />
+//             <p className="mt-2">No recent activity</p>
+//           </div>
+//         ) : (
+//           <div className="space-y-4">
+//             {tracking.slice(0, 5).map((item) => (
+//               <div
+//                 key={item.id}
+//                 className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+//               >
+//                 <div className="flex items-center space-x-3">
+//                   <div className="p-2 rounded-full bg-primary/10">
+//                     <Users className="h-4 w-4 text-primary" />
+//                   </div>
+//                   <div>
+//                     <p className="font-medium">{item.affiliate_code}</p>
+//                     <p className="text-sm text-muted-foreground">{item.shop}</p>
+//                   </div>
+//                 </div>
+//                 <div className="text-right">
+//                   <Badge
+//                     className={
+//                       item.status === "converted"
+//                         ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
+//                         : item.status === "pending"
+//                           ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400"
+//                           : "bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400"
+//                     }
+//                   >
+//                     {item.status}
+//                   </Badge>
+//                   <p className="text-xs text-muted-foreground mt-1">
+//                     {new Date(item.first_seen_at).toLocaleDateString()}
+//                   </p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//         <Link
+//           href="/affiliate"
+//           className="text-primary hover:underline text-sm block text-center mt-4"
+//         >
+//           View all activity →
+//         </Link>
+//       </CardContent>
+//     </Card>
+//   );
+// }
 
-function AffiliateTable({ tracking }) {
-  return (
-    <Card className="transition-all hover:shadow-md hover:-translate-y-0.5">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center">
-          <Users className="h-5 w-5 mr-2 text-primary" />
-          Affiliate Tracking
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {tracking.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground/20" />
-            <p className="mt-2">No tracking data</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {tracking.slice(0, 5).map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-              >
-                <div>
-                  <Link
-                    href={`/affiliate/${item.reliable_hash}`}
-                    className="font-medium hover:text-primary transition-colors"
-                  >
-                    {item.affiliate_code}
-                  </Link>
-                  <p className="text-sm text-muted-foreground">{item.shop}</p>
-                </div>
-                <div className="text-right">
-                  <Badge
-                    className={
-                      item.status === "converted"
-                        ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
-                        : item.status === "pending"
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400"
-                          : "bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400"
-                    }
-                  >
-                    {item.status}
-                  </Badge>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(item.first_seen_at).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        <Link
-          href="/affiliate"
-          className="text-primary hover:underline text-sm block text-center mt-4"
-        >
-          View all affiliates →
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
+// function AffiliateTable({ tracking }) {
+//   return (
+//     <Card className="transition-all hover:shadow-md hover:-translate-y-0.5">
+//       <CardHeader className="flex flex-row items-center justify-between">
+//         <CardTitle className="flex items-center">
+//           <Users className="h-5 w-5 mr-2 text-primary" />
+//           Affiliate Tracking
+//         </CardTitle>
+//       </CardHeader>
+//       <CardContent>
+//         {tracking.length === 0 ? (
+//           <div className="text-center py-8 text-muted-foreground">
+//             <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground/20" />
+//             <p className="mt-2">No tracking data</p>
+//           </div>
+//         ) : (
+//           <div className="space-y-4">
+//             {tracking.slice(0, 5).map((item) => (
+//               <div
+//                 key={item.id}
+//                 className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+//               >
+//                 <div>
+//                   <Link
+//                     href={`/affiliate/${item.reliable_hash}`}
+//                     className="font-medium hover:text-primary transition-colors"
+//                   >
+//                     {item.affiliate_code}
+//                   </Link>
+//                   <p className="text-sm text-muted-foreground">{item.shop}</p>
+//                 </div>
+//                 <div className="text-right">
+//                   <Badge
+//                     className={
+//                       item.status === "converted"
+//                         ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
+//                         : item.status === "pending"
+//                           ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400"
+//                           : "bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400"
+//                     }
+//                   >
+//                     {item.status}
+//                   </Badge>
+//                   <p className="text-xs text-muted-foreground mt-1">
+//                     {new Date(item.first_seen_at).toLocaleDateString()}
+//                   </p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//         <Link
+//           href="/affiliate"
+//           className="text-primary hover:underline text-sm block text-center mt-4"
+//         >
+//           View all affiliates →
+//         </Link>
+//       </CardContent>
+//     </Card>
+//   );
+// }

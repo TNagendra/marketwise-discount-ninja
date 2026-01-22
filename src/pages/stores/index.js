@@ -25,6 +25,7 @@ const FILTER_OPTIONS = [
   { value: "store", label: "Store" },
   { value: "email", label: "Contact Email" },
   { value: "plan", label: "Plan" },
+  { value: "status", label: "Status" },
   { value: "installed", label: "Installed At" },
   { value: "activity", label: "Last Activity" },
 ];
@@ -179,6 +180,21 @@ export default function StoresPage() {
                       />
                     </div>
                   </div>
+                ) : newFilter.type === "status" ? (
+                  <Select
+                    value={newFilter.value}
+                    onValueChange={(v) =>
+                      setNewFilter({ ...newFilter, value: v })
+                    }
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <Input
                     placeholder="Enter value"
@@ -241,16 +257,18 @@ function StoreTable({ stores }) {
           <TableRow>
             <TableHead>Store</TableHead>
             <TableHead>Plan</TableHead>
+            <TableHead>Shop Owner</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Installed</TableHead>
             <TableHead>Last Activity</TableHead>
+            <TableHead className="text-center">View</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {stores.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8">
+              <TableCell colSpan={8} className="text-center py-8">
                 No stores found
               </TableCell>
             </TableRow>
@@ -258,15 +276,19 @@ function StoreTable({ stores }) {
             stores.map((s) => (
               <TableRow key={s.shop}>
                 <TableCell className="font-medium">
-                  <Link
-                    href={`/stores/${s.shop}`}
-                    className="flex items-center gap-2 text-primary"
-                  >
+                  <div className="flex items-center gap-2">
                     <Store className="h-4 w-4" />
-                    {s.shop}
-                  </Link>
+                    <span className="select-text break-all">{s.shop}</span>
+                    {/* <Link
+                      href={`/stores/${s.shop}`}
+                      className="ml-2 text-sm text-primary hover:underline"
+                    >
+                      View
+                    </Link> */}
+                  </div>
                 </TableCell>
                 <TableCell>{s.planDisplayName || "—"}</TableCell>
+                <TableCell>{s.shopOwnerName || "—"}</TableCell>
                 <TableCell>{s.contactEmail || s.email || "—"}</TableCell>
                 <TableCell>
                   <Badge
@@ -281,6 +303,33 @@ function StoreTable({ stores }) {
                 </TableCell>
                 <TableCell>{format(s.createdAt)}</TableCell>
                 <TableCell>{format(s.updatedAt)}</TableCell>
+                <TableCell className="text-center">
+                  <Link
+                    href={`/stores/${s.shop}`}
+                    className="inline-flex items-center text-primary hover:underline"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  </Link>
+                </TableCell>
               </TableRow>
             ))
           )}
@@ -298,6 +347,11 @@ function applyFilters(stores, filters) {
       switch (filter.type) {
         case "store":
           return store.shop?.toLowerCase().includes(filter.value.toLowerCase());
+        case "status":
+          if (!filter.value) return true;
+          if (filter.value === "active") return !!store.isActive;
+          if (filter.value === "inactive") return !store.isActive;
+          return true;
         case "email":
           const email = store.contactEmail || store.email || "";
           return email.toLowerCase().includes(filter.value.toLowerCase());
@@ -326,5 +380,6 @@ function applyFilters(stores, filters) {
 
 function format(date) {
   if (!date) return "—";
-  return new Date(date).toLocaleDateString();
+  // show full timestamp with date and time
+  return new Date(date).toLocaleString();
 }

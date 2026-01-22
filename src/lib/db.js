@@ -10,10 +10,12 @@ if (process.env.ALLOW_SELF_SIGNED_CERTS === "1") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   if (process.env.NODE_ENV === "production") {
     console.warn(
-      'DB: ALLOW_SELF_SIGNED_CERTS=1 detected in production — TLS certificate verification is disabled. This is insecure; prefer a CA-signed certificate.',
+      "DB: ALLOW_SELF_SIGNED_CERTS=1 detected in production — TLS certificate verification is disabled. This is insecure; prefer a CA-signed certificate.",
     );
   } else {
-    console.info('DB: ALLOW_SELF_SIGNED_CERTS=1 — TLS certificate verification disabled for local/dev');
+    console.info(
+      "DB: ALLOW_SELF_SIGNED_CERTS=1 — TLS certificate verification disabled for local/dev",
+    );
   }
 }
 
@@ -163,7 +165,8 @@ export async function getStores(page = 1, limit = 10) {
         shop,
         "isActive",
         "hasActivePayment",
-        "planName",
+    "planName",
+    "planDisplayName",
         "shopOwnerName",
         "email",
         "contactEmail",
@@ -206,6 +209,7 @@ export async function getStoreDetails(shopId) {
         "isActive",
         "hasActivePayment",
         "planName",
+        "planDisplayName",
         "shopOwnerName",
         "email",
         "contactEmail",

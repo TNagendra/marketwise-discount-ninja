@@ -274,28 +274,98 @@ export default function Layout({ children }) {
         const res = await fetch("/api/auth/me");
         const json = await res.json();
         setUser(json.user);
+        return json;
       } catch (e) {
         setUser(null);
+        return { user: null, expiresAt: null };
       }
     };
 
     // initial fetch
-    fetchUser();
+    let logoutTimer = null;
+    const scheduleLogoutFromExpires = (expiresAt) => {
+      try {
+        if (!expiresAt) return;
+        const msUntil = Number(expiresAt) - Date.now();
+        if (msUntil <= 0) {
+          // already expired - redirect now
+          setUser(null);
+          try {
+            window.dispatchEvent(new Event("auth:change"));
+          } catch (e) {}
+          Router.push("/login");
+          return;
+        }
+        if (logoutTimer) clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(async () => {
+          try {
+            await fetch("/api/auth/logout");
+          } catch (e) {}
+          setUser(null);
+          try {
+            window.dispatchEvent(new Event("auth:change"));
+          } catch (e) {}
+          Router.push("/login");
+        }, msUntil + 50);
+      } catch (e) {
+        // ignore
+      }
+    };
 
-    // listen for auth changes (login/logout) so the UI updates immediately
-    const onAuthChange = () => fetchUser();
+    (async () => {
+      const initial = await fetchUser();
+      scheduleLogoutFromExpires(initial?.expiresAt || null);
+    })();
+
+    const onAuthChange = async () => {
+      const j = await fetchUser();
+      scheduleLogoutFromExpires(j?.expiresAt || null);
+    };
     window.addEventListener("auth:change", onAuthChange);
+
+    // Poll /api/auth/me periodically to catch session expiry that might be missed
+    const pollAuthInterval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) throw new Error("auth check failed");
+        const json = await res.json();
+        if (!json.user) {
+          try {
+            if (logoutTimer) {
+              clearTimeout(logoutTimer);
+              logoutTimer = null;
+            }
+          } catch (e) {}
+          clearInterval(pollAuthInterval);
+          setUser(null);
+          try {
+            window.dispatchEvent(new Event("auth:change"));
+          } catch (e) {}
+          if (router.pathname !== "/login") Router.push("/login");
+          return;
+        }
+        // if server supplies an expiresAt, reschedule the logout
+        if (json.expiresAt) scheduleLogoutFromExpires(json.expiresAt);
+      } catch (e) {
+        // ignore
+      }
+    }, 10000);
 
     return () => {
       window.removeEventListener("auth:change", onAuthChange);
+      try {
+        if (logoutTimer) clearTimeout(logoutTimer);
+      } catch (e) {}
+      try {
+        clearInterval(pollAuthInterval);
+      } catch (e) {}
     };
   }, []);
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Stores", href: "/stores" },
-    { name: "Discounts", href: "/discounts" },
-    { name: "Affiliate Tracking", href: "/affiliate" },
+    // Discounts and Affiliate links removed per request
   ];
 
   const toggleTheme = () => {

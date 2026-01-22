@@ -18,7 +18,7 @@ export default function StoreDetailsPage() {
     async function fetchData() {
       try {
         const res = await fetch(
-          `/api/stores/${id}?page=${discountPage}&limit=10`
+          `/api/stores/${id}?page=${discountPage}&limit=10`,
         );
         if (!res.ok) throw new Error(`API error ${res.status}`);
         const data = await res.json();
@@ -26,12 +26,12 @@ export default function StoreDetailsPage() {
         setDiscounts(
           data.discounts && data.discounts.discounts
             ? data.discounts.discounts
-            : data.discounts || []
+            : data.discounts || [],
         );
         setDiscountTotal(
           data.discounts && data.discounts.total
             ? data.discounts.total
-            : data.total || 0
+            : data.total || 0,
         );
       } catch (error) {
         console.error("Error fetching store data:", error);
@@ -69,7 +69,9 @@ export default function StoreDetailsPage() {
             <p className="text-gray-600">Contact Email: {store.contactEmail}</p>
           </div>
           <div>
-            <p className="text-gray-600">Plan: {store.planName || "N/A"}</p>
+            <p className="text-gray-600">
+              Plan: {store.planDisplayName || "N/A"}
+            </p>
             <p className="text-gray-600">Currency: {store.currencyCode}</p>
             <p className="text-gray-600">Country: {store.billingCountry}</p>
           </div>
@@ -133,8 +135,8 @@ export default function StoreDetailsPage() {
                         discount.status === "ACTIVE"
                           ? "bg-green-100 text-green-800"
                           : discount.status === "DRAFT"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {discount.status}

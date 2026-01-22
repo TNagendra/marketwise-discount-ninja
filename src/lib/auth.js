@@ -33,6 +33,31 @@ export function getSessionUserFromReq(req) {
   }
 }
 
+// Returns both the user (or null) and the raw expiresAt timestamp from the cookie
+export function getSessionFromReq(req) {
+  const cookie = req.headers?.cookie || "";
+  const match = cookie.match(/(?:^|; )admin_session=([^;]+)/);
+  if (!match) return { user: null, expiresAt: null };
+  try {
+    const parts = decodeURIComponent(match[1]).split("|");
+    const email = parts[0];
+    const expiresAt = parts[1] ? Number(parts[1]) : null;
+    const user = ADMIN_USERS.find((u) => u.email === email);
+
+    // If cookie includes an expiresAt in the past, treat as expired
+    if (expiresAt && Date.now() > expiresAt) {
+      return { user: null, expiresAt };
+    }
+
+    return {
+      user: user ? { email: user.email, name: user.name } : null,
+      expiresAt,
+    };
+  } catch (e) {
+    return { user: null, expiresAt: null };
+  }
+}
+
 export function clearSessionCookie(res) {
   // Expire cookie immediately
   res.setHeader(
