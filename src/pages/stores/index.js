@@ -252,89 +252,91 @@ function StoreSection({ title, icon, stores }) {
 function StoreTable({ stores }) {
   return (
     <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Store</TableHead>
-            <TableHead>Plan</TableHead>
-            <TableHead>Shop Owner</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Installed</TableHead>
-            <TableHead>Last Activity</TableHead>
-            <TableHead className="text-center">View</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {stores.length === 0 ? (
+      <div className="overflow-x-auto">
+        <Table className="min-w-[900px] text-xs">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-8">
-                No stores found
-              </TableCell>
+              <TableHead>Store</TableHead>
+              <TableHead>Plan</TableHead>
+              <TableHead>Shop Owner</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Installed</TableHead>
+              <TableHead>Last Activity</TableHead>
+              <TableHead className="text-center">View</TableHead>
             </TableRow>
-          ) : (
-            stores.map((s) => (
-              <TableRow key={s.shop}>
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-2">
-                    <Store className="h-4 w-4" />
-                    <span className="select-text break-all">{s.shop}</span>
-                    {/* <Link
+          </TableHeader>
+          <TableBody>
+            {stores.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8">
+                  No stores found
+                </TableCell>
+              </TableRow>
+            ) : (
+              stores.map((s) => (
+                <TableRow key={s.shop}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <Store className="h-4 w-4" />
+                      <span className="select-text break-all">{s.shop}</span>
+                      {/* <Link
                       href={`/stores/${s.shop}`}
                       className="ml-2 text-sm text-primary hover:underline"
                     >
                       View
                     </Link> */}
-                  </div>
-                </TableCell>
-                <TableCell>{s.planDisplayName || "—"}</TableCell>
-                <TableCell>{s.shopOwnerName || "—"}</TableCell>
-                <TableCell>{s.contactEmail || s.email || "—"}</TableCell>
-                <TableCell>
-                  <Badge
-                    className={
-                      s.isActive
-                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                    }
-                  >
-                    {s.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </TableCell>
-                <TableCell>{format(s.createdAt)}</TableCell>
-                <TableCell>{format(s.updatedAt)}</TableCell>
-                <TableCell className="text-center">
-                  <Link
-                    href={`/stores/${s.shop}`}
-                    className="inline-flex items-center text-primary hover:underline"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
+                    </div>
+                  </TableCell>
+                  <TableCell>{s.planDisplayName || "—"}</TableCell>
+                  <TableCell>{s.shopOwnerName || "—"}</TableCell>
+                  <TableCell>{s.contactEmail || s.email || "—"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={
+                        s.isActive
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      }
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+                      {s.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{format(s.createdAt)}</TableCell>
+                  <TableCell>{format(s.updatedAt)}</TableCell>
+                  <TableCell className="text-center">
+                    <Link
+                      href={`/stores/${s.shop}`}
+                      className="inline-flex items-center text-primary hover:underline"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

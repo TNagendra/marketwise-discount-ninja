@@ -377,9 +377,9 @@ export default function Layout({ children }) {
   // SSR placeholder (prevents hydration mismatch)
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-background app-gradient-bg">
-        <nav className="border-b bg-card h-16" />
-        <main className="max-w-7xl mx-auto py-6 px-4">{children}</main>
+      <div className="min-h-screen bg-background app-gradient-bg w-full">
+        <nav className="border-b bg-card h-16 w-full" />
+        <main className="w-full py-6 px-4">{children}</main>
       </div>
     );
   }
@@ -395,7 +395,7 @@ export default function Layout({ children }) {
     backdrop-blur
   "
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* LEFT */}
             <div className="flex items-center">
@@ -564,9 +564,7 @@ export default function Layout({ children }) {
 
       {/* MAIN CONTENT */}
       <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 px-4">
-          {children}
-        </div>
+        <div className="w-full py-6 sm:px-6 lg:px-8 px-4">{children}</div>
       </main>
     </div>
   );
