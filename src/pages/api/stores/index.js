@@ -127,12 +127,14 @@ export default async function handler(req, res) {
       `
       SELECT
         shop,
+        "shopName",
         "planDisplayName",
         "contactEmail",
         email,
         "isActive",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "uninstalledAt"
       FROM stores
       ${whereClause}
       ORDER BY "createdAt" DESC

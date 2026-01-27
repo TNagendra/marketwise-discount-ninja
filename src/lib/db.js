@@ -211,13 +211,15 @@ export async function getStoreDetails(shopId) {
         "planName",
         "planDisplayName",
         "shopOwnerName",
+        "shopName",
         "email",
         "contactEmail",
         "currencyCode",
         "billingCountry",
         "billingCity",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "uninstalledAt"
       FROM stores
       WHERE shop = $1
       LIMIT 1
@@ -240,13 +242,15 @@ export async function getActiveStores() {
       "isActive",
       "planDisplayName",
       "shopOwnerName",
+      "shopName",
       email,
       "contactEmail",
       "currencyCode",
       "billingCountry",
       "billingCity",
       "createdAt",
-      "updatedAt"
+      "updatedAt",
+      "uninstalledAt"
     FROM stores
     WHERE "isActive" = true
     ORDER BY "createdAt" DESC
@@ -263,13 +267,15 @@ export async function getInactiveStores() {
       "isActive",
       "planDisplayName",
       "shopOwnerName",
+      "shopName",
       email,
       "contactEmail",
       "currencyCode",
       "billingCountry",
       "billingCity",
       "createdAt",
-      "updatedAt"
+      "updatedAt",
+      "uninstalledAt"
     FROM stores
     WHERE "isActive" = false
     ORDER BY "createdAt" DESC
