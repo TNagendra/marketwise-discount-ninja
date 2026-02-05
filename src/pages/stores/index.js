@@ -674,6 +674,7 @@ function StoreTable({ stores, showUninstalled, showLastActivity }) {
         <Table className="min-w-[1000px] text-xs">
           <TableHeader>
             <TableRow>
+              <TableHead className="text-center">View</TableHead>
               <TableHead>Store</TableHead>
               <TableHead>Shop Name</TableHead>
               <TableHead>Plan</TableHead>
@@ -683,7 +684,6 @@ function StoreTable({ stores, showUninstalled, showLastActivity }) {
               <TableHead>Installed</TableHead>
               {showUninstalled && <TableHead>Uninstalled</TableHead>}
               {showLastActivity && <TableHead>Last Activity</TableHead>}
-              <TableHead className="text-center">View</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -696,34 +696,6 @@ function StoreTable({ stores, showUninstalled, showLastActivity }) {
             ) : (
               stores.map((s) => (
                 <TableRow key={s.shop}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <Store className="h-4 w-4" />
-                      <span className="select-text break-all">{s.shop}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{s.shopname || "—"}</TableCell>
-                  <TableCell>{s.planDisplayName || "—"}</TableCell>
-                  <TableCell>{s.shopOwnerName || "—"}</TableCell>
-                  <TableCell>{s.contactEmail || s.email || "—"}</TableCell>
-                  <TableCell>
-                    <Badge
-                      className={
-                        s.isActive
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                      }
-                    >
-                      {s.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{format(s.createdAt)}</TableCell>
-                  {showUninstalled && (
-                    <TableCell>{format(s.uninstalledAt) || "—"}</TableCell>
-                  )}
-                  {showLastActivity && (
-                    <TableCell>{format(s.updatedAt)}</TableCell>
-                  )}
                   <TableCell className="text-center">
                     <Link
                       href={`/stores/${s.shop}`}
@@ -751,6 +723,34 @@ function StoreTable({ stores, showUninstalled, showLastActivity }) {
                       </svg>
                     </Link>
                   </TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <Store className="h-4 w-4" />
+                      <span className="select-text break-all">{s.shop}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{s.shopName || "—"}</TableCell>
+                  <TableCell>{s.planDisplayName || "—"}</TableCell>
+                  <TableCell>{s.shopOwnerName || "—"}</TableCell>
+                  <TableCell>{s.contactEmail || s.email || "—"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={
+                        s.isActive
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      }
+                    >
+                      {s.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{format(s.createdAt)}</TableCell>
+                  {showUninstalled && (
+                    <TableCell>{format(s.uninstalledAt) || "—"}</TableCell>
+                  )}
+                  {showLastActivity && (
+                    <TableCell>{format(s.updatedAt)}</TableCell>
+                  )}
                 </TableRow>
               ))
             )}
@@ -770,7 +770,7 @@ function applyFilters(stores, filters) {
         case "store":
           return store.shop?.toLowerCase().includes(filter.value.toLowerCase());
         case "shopname":
-          return store.shopname
+          return store.shopName
             ?.toLowerCase()
             .includes(filter.value.toLowerCase());
         case "status":
