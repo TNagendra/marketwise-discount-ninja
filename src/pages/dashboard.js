@@ -11,10 +11,13 @@ import {
   Clock,
 } from "lucide-react";
 import Link from "next/link";
-export async function getServerSideProps({ req }) {
-  const cookie = req.headers.cookie || "";
+import { getSessionFromReq } from "@/lib/auth";
 
-  if (!cookie.includes("admin_session")) {
+export async function getServerSideProps({ req }) {
+  const { user } = getSessionFromReq(req);
+
+  if (!user) {
+    // Session missing or expired: redirect immediately to login
     return {
       redirect: {
         destination: "/login",
@@ -43,6 +46,11 @@ export default function Dashboard() {
     async function fetchData() {
       try {
         const res = await fetch("/api/dashboard");
+        if (res.status === 401) {
+          // Session expired/unauthorized — redirect immediately
+          window.location.href = "/login";
+          return;
+        }
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         const data = await res.json();
 

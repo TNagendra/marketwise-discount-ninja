@@ -314,6 +314,15 @@ export default function Layout({ children }) {
 
     (async () => {
       const initial = await fetchUser();
+      // If initial fetch shows no user, redirect immediately to prevent briefly showing protected UI
+      if (!initial?.user) {
+        setUser(null);
+        try {
+          window.dispatchEvent(new Event("auth:change"));
+        } catch (e) {}
+        if (router.pathname !== "/login") Router.push("/login");
+        return;
+      }
       scheduleLogoutFromExpires(initial?.expiresAt || null);
     })();
 
