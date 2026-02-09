@@ -117,6 +117,13 @@ export async function getDashboardStats() {
       WHERE "isActive" = true
     `);
 
+    // Inactive stores
+    const inactiveStoresResult = await dbClient.query(`
+      SELECT COUNT(*) as count 
+      FROM stores 
+      WHERE "isActive" = false
+    `);
+
     // Total discounts
     const totalDiscountsResult = await dbClient.query(`
       SELECT COUNT(*) as count 
@@ -138,6 +145,7 @@ export async function getDashboardStats() {
 
     return {
       activeStores: parseInt(activeStoresResult.rows[0]?.count) || 0,
+      inactiveStores: parseInt(inactiveStoresResult.rows[0]?.count) || 0,
       totalDiscounts: parseInt(totalDiscountsResult.rows[0]?.count) || 0,
       activeDiscounts: parseInt(activeDiscountsResult.rows[0]?.count) || 0,
       totalUsage: parseInt(totalUsageResult.rows[0]?.count) || 0,
@@ -146,6 +154,7 @@ export async function getDashboardStats() {
     console.error("Database stats query error:", error);
     return {
       activeStores: 0,
+      inactiveStores: 0,
       totalDiscounts: 0,
       activeDiscounts: 0,
       totalUsage: 0,

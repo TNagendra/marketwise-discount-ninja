@@ -204,6 +204,7 @@ function GraphCard({ title, value, subtitle, icon, accent, children }) {
 export default function Dashboard() {
   const [stats, setStats] = useState({
     activeStores: 0,
+    inactiveStores: 0,
     totalDiscounts: 0,
     activeDiscounts: 0,
     totalUsage: 0,
@@ -249,13 +250,6 @@ export default function Dashboard() {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
-
-  const latestStoreStatus =
-    storeStatusTimeseries[storeStatusTimeseries.length - 1] || {};
-  const inactiveStores =
-    typeof latestStoreStatus.inactive === "number"
-      ? latestStoreStatus.inactive
-      : 0;
 
   const activeSeries = storeStatusTimeseries.map((d) => ({
     day: d.day,
@@ -317,7 +311,7 @@ export default function Dashboard() {
 
         <GraphCard
           title="Inactive Stores"
-          value={inactiveStores}
+          value={stats.inactiveStores}
           subtitle="Stores currently offline"
           icon={<Store className="h-5 w-5" />}
           accent={{
