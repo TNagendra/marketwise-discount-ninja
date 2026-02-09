@@ -451,6 +451,76 @@ export async function getRecentAffiliateTracking(page = 1, limit = 10) {
   }
 }
 
+// Get usage counts per day for the last `days` days (inclusive)
+export async function getUsageTimeseries(days = 14) {
+  try {
+    const dbClient = await connectDB();
+
+    // start date = (days - 1) days ago to include today as the last day
+    const start = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000);
+    const startISO = start.toISOString().slice(0, 10); // YYYY-MM-DD
+
+    const q = `
+      SELECT d::date AS day, COALESCE(t.cnt, 0) AS count
+      FROM generate_series($1::date, current_date, '1 day') d
+      LEFT JOIN (
+        SELECT date_trunc('day', "usedAt")::date AS day, COUNT(*) AS cnt
+        FROM "DiscountUsage"
+        WHERE "usedAt" >= $1::date
+        GROUP BY day
+      ) t ON d::date = t.day
+      ORDER BY d::date;
+    `;
+
+    const result = await dbClient.query(q, [startISO]);
+
+    return (result.rows || []).map((r) => ({
+      day: r.day
+        ? r.day instanceof Date
+          ? r.day.toISOString().slice(0, 10)
+          : String(r.day)
+        : null,
+      count: parseInt(r.count) || 0,
+    }));
+  } catch (error) {
+    console.error("getUsageTimeseries error", error);
+    return [];
+  }
+}
+
+// Get store active/inactive counts per day for the last `days` days (inclusive)
+export async function getStoreStatusTimeseries(days = 14) {
+  try {
+    const dbClient = await connectDB();
+    const start = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000);
+    const startISO = start.toISOString().slice(0, 10);
+
+    // For each day d, count active stores (created <= d and isActive=true)
+    // and inactive stores (created <= d, isActive=false, and uninstalledAt <= d).
+    const q = `
+      SELECT d::date AS day,
+        (SELECT COUNT(*) FROM stores s WHERE s."createdAt"::date <= d::date AND s."isActive" = true) AS active,
+        (SELECT COUNT(*) FROM stores s WHERE s."createdAt"::date <= d::date AND s."isActive" = false AND s."uninstalledAt" IS NOT NULL AND s."uninstalledAt"::date <= d::date) AS inactive
+      FROM generate_series($1::date, current_date, '1 day') d
+      ORDER BY d::date;
+    `;
+
+    const result = await dbClient.query(q, [startISO]);
+    return (result.rows || []).map((r) => ({
+      day: r.day
+        ? r.day instanceof Date
+          ? r.day.toISOString().slice(0, 10)
+          : String(r.day)
+        : null,
+      active: parseInt(r.active) || 0,
+      inactive: parseInt(r.inactive) || 0,
+    }));
+  } catch (error) {
+    console.error("getStoreStatusTimeseries error", error);
+    return [];
+  }
+}
+
 // Get affiliate tracking details
 export async function getAffiliateTrackingDetails(hash) {
   try {
